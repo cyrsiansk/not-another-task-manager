@@ -2,8 +2,8 @@ from getgauge.python import step, before_suite
 import os
 import requests
 
-API_BASE = os.getenv("API_URL", "http://localhost:8000/api/v1")
-HEALTH_URL = API_BASE.rsplit("/api/v1", 1)[0] + "/health"
+API_BASE = os.getenv("API_URL", "http://localhost:8000/")
+HEALTH_URL = API_BASE + "/health"
 _storage = {}
 
 
