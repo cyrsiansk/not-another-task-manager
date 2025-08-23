@@ -1,0 +1,32 @@
+from fastapi import FastAPI
+import os
+
+from app.logging import setup_logging, get_logger
+
+setup_logging()
+logger = get_logger(__name__)
+
+APP_TITLE = "Task Manager"
+APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
+APP_DESCRIPTION = (
+    "Task Manager service — CRUD for user tasks. Swagger UI available at /docs."
+)
+
+OPENAPI_URL = "/api/v1/openapi.json"
+DOCS_URL = "/docs"
+REDOC_URL = "/redoc"
+
+app = FastAPI(
+    title=APP_TITLE,
+    version=APP_VERSION,
+    description=APP_DESCRIPTION,
+    docs_url=DOCS_URL,
+    redoc_url=REDOC_URL,
+    openapi_url=OPENAPI_URL,
+)
+
+
+@app.get("/health", tags=["health"])
+def health():
+    logger.debug("health.check")
+    return {"status": "ok"}

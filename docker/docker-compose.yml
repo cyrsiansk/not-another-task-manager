@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: task-manager:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - LOG_TO_FILE=false
+      - LOG_TO_CONSOLE=true
+    deploy:
+      restart_policy:
+        condition: on-failure
+    logging:
+      driver: "json-file"

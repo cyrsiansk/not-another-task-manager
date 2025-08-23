@@ -1,0 +1,38 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start app (uvicorn) in background
+        run: |
+          nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
+          
+          for i in $(seq 1 40); do
+            if curl -sSf http://127.0.0.1:8000/health >/dev/null 2>&1; then
+              echo "app is up"
+              break
+            fi
+            sleep 1
+          done
+          
+          tail -n +1 uvicorn.log || true
+
+      - name: Run tests
+        run: |
+          pytest -q
