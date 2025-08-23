@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = "secret"
     DB_USER: str = "app"
     DB_NAME: str = "app_db"
+    DB_HOST: str = "db"
 
     @computed_field
     @property

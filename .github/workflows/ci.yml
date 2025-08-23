@@ -49,6 +49,10 @@ jobs:
         run: |
           pytest -q
 
+      - name: Run migrations
+        run: |
+          PYTHONPATH=$(pwd) alembic upgrade head
+
       - name: Start app (uvicorn) in background
         run: |
           nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &

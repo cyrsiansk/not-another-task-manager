@@ -10,8 +10,10 @@ COPY requirements.txt ./
 RUN python -m pip install --upgrade pip
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY . .
 
 EXPOSE 8000
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
