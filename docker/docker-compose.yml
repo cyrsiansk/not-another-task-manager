@@ -1,5 +1,21 @@
-version: "3.8"
 services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${DB_USER:-app}
+      - POSTGRES_DB=${DB_NAME:-app_db}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-app} -d ${DB_NAME:-app_db} -h 0.0.0.0 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
   web:
     build:
       context: ..
@@ -7,13 +23,13 @@ services:
     image: task-manager:latest
     ports:
       - "8000:8000"
-    environment:
-      - APP_HOST=0.0.0.0
-      - APP_PORT=8000
-      - LOG_TO_FILE=false
-      - LOG_TO_CONSOLE=true
+    depends_on:
+      - db
     deploy:
       restart_policy:
         condition: on-failure
     logging:
       driver: "json-file"
+
+volumes:
+  db_data:

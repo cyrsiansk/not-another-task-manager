@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings
+from pydantic import computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -14,8 +15,17 @@ class Settings(BaseSettings):
 
     DISABLE_LOGGING: bool = False
 
-    class Config:
-        env_file = ".env"
+    # db
+    POSTGRES_PASSWORD: str = "secret"
+    DB_USER: str = "app"
+    DB_NAME: str = "app_db"
+
+    @computed_field
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql+psycopg2://{self.DB_USER}:{self.POSTGRES_PASSWORD}@db:5432/{self.DB_NAME}"
+
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()
