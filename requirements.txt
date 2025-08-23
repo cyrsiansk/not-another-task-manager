@@ -6,6 +6,8 @@ pydantic_settings
 pytest
 pytest-asyncio
 
+getgauge
+
 black
 ruff
 pre-commit

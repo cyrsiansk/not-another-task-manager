@@ -7,8 +7,8 @@ ENV APP_HOME=/app
 WORKDIR $APP_HOME
 
 COPY requirements.txt ./
-RUN python -m pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --upgrade pip
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 

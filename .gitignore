@@ -2,3 +2,6 @@ logs
 *.pyc
 /.idea/
 /pytest-cache*
+
+.gauge
+reports
