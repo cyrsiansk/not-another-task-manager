@@ -1,3 +1,4 @@
+import os
 from pydantic import computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -23,7 +24,12 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def DATABASE_URL(self) -> str:
-        return f"postgresql+psycopg2://{self.DB_USER}:{self.POSTGRES_PASSWORD}@db:5432/{self.DB_NAME}"
+        env_db = os.getenv("DATABASE_URL")
+        if env_db:
+            return env_db
+
+        host = os.getenv("DB_HOST", self.DB_HOST)
+        return f"postgresql+psycopg2://{self.DB_USER}:{self.POSTGRES_PASSWORD}@{host}:5432/{self.DB_NAME}"
 
     model_config = SettingsConfigDict(env_file=".env")
 
