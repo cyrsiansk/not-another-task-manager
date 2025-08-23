@@ -22,6 +22,7 @@ def setup_logging() -> None:
         "LOG_TO_FILE",
         os.getenv("LOG_TO_FILE", "true").lower() in ("1", "true", "yes"),
     )
+
     log_file = getattr(settings, "LOG_FILE", os.getenv("LOG_FILE", "logs/app.log"))
     log_to_console = getattr(settings, "LOG_TO_CONSOLE", True)
 
