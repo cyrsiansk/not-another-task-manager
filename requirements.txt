@@ -5,3 +5,7 @@ pydantic_settings
 
 pytest
 pytest-asyncio
+
+black
+ruff
+pre-commit
