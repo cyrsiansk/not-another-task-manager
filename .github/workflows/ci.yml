@@ -19,6 +19,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install Gauge
+        run: |
+          curl -SsL https://downloads.gauge.org/stable | sh
+          echo "$HOME/.gauge/bin" >> $GITHUB_PATH
+          gauge version
+
       - name: Run linters
         run: |
           black --check .
@@ -27,12 +33,6 @@ jobs:
       - name: Run tests
         run: |
           pytest -q
-
-      - name: Install Gauge
-        run: |
-          curl -SsL https://downloads.gauge.org/stable | sh
-          echo "$HOME/.gauge/bin" >> $GITHUB_PATH
-          gauge version
 
       - name: Start app (uvicorn) in background
         run: |
