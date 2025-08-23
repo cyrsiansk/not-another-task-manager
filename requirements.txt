@@ -3,6 +3,7 @@ uvicorn
 pydantic
 pydantic_settings
 sqlalchemy
+psycopg2-binary
 
 pytest
 pytest-asyncio

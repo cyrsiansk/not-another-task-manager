@@ -1,6 +1,11 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 import os
 
+from app.api.v1 import tasks
+from app.db.base import Base
+from app.db.session import engine
 from app.logging import setup_logging, get_logger
 
 setup_logging()
@@ -16,6 +21,13 @@ OPENAPI_URL = "/api/v1/openapi.json"
 DOCS_URL = "/docs"
 REDOC_URL = "/redoc"
 
+
+@asynccontextmanager
+async def lifespan(fastapi_app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
 app = FastAPI(
     title=APP_TITLE,
     version=APP_VERSION,
@@ -23,7 +35,10 @@ app = FastAPI(
     docs_url=DOCS_URL,
     redoc_url=REDOC_URL,
     openapi_url=OPENAPI_URL,
+    lifespan=lifespan,
 )
+
+app.include_router(tasks.router, prefix="/api/v1", tags=["tasks"])
 
 
 @app.get("/health", tags=["health"])

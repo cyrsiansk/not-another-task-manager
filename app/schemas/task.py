@@ -26,5 +26,6 @@ class TaskRead(BaseModel):
     status: TaskStatus
     created_at: datetime
     updated_at: datetime
+    version: int
 
     model_config = {"from_attributes": True}
