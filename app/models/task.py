@@ -23,6 +23,7 @@ class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(PGUUID(as_uuid=True), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text)
     status = Column(

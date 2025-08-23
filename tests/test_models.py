@@ -1,3 +1,4 @@
+# tests/test_models_and_schemas.py
 from uuid import UUID
 from datetime import datetime
 
@@ -5,6 +6,7 @@ import pytest
 
 from app.models.task import TaskStatus
 from app.models.task import Task
+from app.models.user import User
 from app.models import __all__ as models_all
 
 
@@ -17,9 +19,18 @@ def test_taskstatus_values_and_types():
 
 
 def test_models_registered_and_tablenames():
+    assert "User" in models_all
     assert "Task" in models_all
 
+    assert getattr(User, "__tablename__", None) == "users"
     assert getattr(Task, "__tablename__", None) == "tasks"
+
+
+def test_user_model_instantiation_minimal():
+    u = User(email="test@example.com")
+    assert hasattr(u, "email")
+    assert u.email == "test@example.com"
+    assert hasattr(u, "created_at")
 
 
 @pytest.mark.parametrize(
@@ -27,6 +38,7 @@ def test_models_registered_and_tablenames():
     [
         {
             "id": str(UUID(int=1)),
+            "user_id": str(UUID(int=2)),
             "title": "Example",
             "description": None,
             "status": "created",

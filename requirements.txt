@@ -5,6 +5,11 @@ pydantic_settings
 sqlalchemy
 psycopg2-binary
 alembic
+email-validator
+passlib[bcrypt]
+python-jose[cryptography]
+bcrypt
+python-multipart
 
 pytest
 pytest-asyncio

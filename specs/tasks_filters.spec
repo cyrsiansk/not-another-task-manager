@@ -3,6 +3,9 @@
 ## List tasks with status filter and limit
 Tags: tasks, list, filter
 
+* Generate random credentials
+* Register user via API (expect success)
+* Login with credentials (expect success)
 * Create task with title "t1" and status "created"
 * Create task with title "t2" and status "in_progress"
 * Create task with title "t3" and status "done"

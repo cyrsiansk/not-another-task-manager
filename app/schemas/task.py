@@ -21,6 +21,7 @@ class TaskUpdate(BaseModel):
 
 class TaskRead(BaseModel):
     id: UUID
+    user_id: UUID
     title: str
     description: Optional[str]
     status: TaskStatus

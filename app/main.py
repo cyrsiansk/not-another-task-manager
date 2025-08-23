@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import os
 
-from app.api.v1 import tasks
+from app.api.v1 import tasks, auth
 from app.logging import setup_logging, get_logger
 
 setup_logging()
@@ -28,6 +28,7 @@ app = FastAPI(
 )
 
 app.include_router(tasks.router, prefix="/api/v1", tags=["tasks"])
+app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 
 
 @app.get("/health", tags=["health"])

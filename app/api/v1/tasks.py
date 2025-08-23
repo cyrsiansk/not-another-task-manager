@@ -14,13 +14,24 @@ from app.crud.task_crud import (
     soft_delete_task,
 )
 from app.models.task import TaskStatus
+from app.api.v1.deps import get_current_user_from_token
+from app.models.user import User
 
 router = APIRouter()
 
 
 @router.post("/tasks", response_model=TaskRead, status_code=status.HTTP_201_CREATED)
-def api_create_task(payload: TaskCreate, db: Session = Depends(get_db)):
-    task = create_task(db, title=payload.title, description=payload.description)
+def api_create_task(
+    payload: TaskCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_from_token),
+):
+    task = create_task(
+        db,
+        user_id=current_user.id,
+        title=payload.title,
+        description=payload.description,
+    )
     return task
 
 
@@ -34,26 +45,37 @@ def api_list_tasks(
         50, ge=1, le=100, description="Maximum number of items to return"
     ),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_from_token),
 ):
-    tasks = list_tasks(db, status=status, limit=limit)
+    tasks = list_tasks(db, user_id=current_user.id, status=status, limit=limit)
     return tasks
 
 
 @router.get("/tasks/{task_id}", response_model=TaskRead)
-def api_get_task(task_id: UUID, db: Session = Depends(get_db)):
-    task = get_task(db, task_id=task_id)
+def api_get_task(
+    task_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_from_token),
+):
+    task = get_task(db, task_id=task_id, user_id=current_user.id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
 
 
 @router.patch("/tasks/{task_id}", response_model=TaskRead)
-def api_update_task(task_id: UUID, payload: TaskUpdate, db: Session = Depends(get_db)):
+def api_update_task(
+    task_id: UUID,
+    payload: TaskUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_from_token),
+):
     expected_version = payload.version
     obj = update_task(
         db,
         task_id=task_id,
-        data=payload.model_dump(),
+        user_id=current_user.id,
+        data=payload.dict(),
         expected_version=expected_version,
     )
     if obj is None:
@@ -62,8 +84,12 @@ def api_update_task(task_id: UUID, payload: TaskUpdate, db: Session = Depends(ge
 
 
 @router.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-def api_delete_task(task_id: UUID, db: Session = Depends(get_db)):
-    ok = soft_delete_task(db, task_id=task_id)
+def api_delete_task(
+    task_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user_from_token),
+):
+    ok = soft_delete_task(db, task_id=task_id, user_id=current_user.id)
     if not ok:
         raise HTTPException(status_code=404, detail="Task not found")
     return None

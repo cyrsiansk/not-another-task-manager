@@ -32,6 +32,11 @@ class Settings(BaseSettings):
         host = os.getenv("DB_HOST", self.DB_HOST)
         return f"postgresql+psycopg2://{self.DB_USER}:{self.POSTGRES_PASSWORD}@{host}:5432/{self.DB_NAME}"
 
+    # security
+    SECRET_KEY: str = "change-me"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ALGORITHM: str = "HS256"
+
     model_config = SettingsConfigDict(env_file=".env")
 
 
