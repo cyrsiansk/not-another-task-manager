@@ -3,6 +3,51 @@ name: CI
 on: [push, pull_request]
 
 jobs:
+  compose-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure docker-compose is available
+        run: |
+          if command -v docker-compose >/dev/null 2>&1; then
+            echo "docker-compose found: $(docker-compose --version)"
+          else
+            echo "docker-compose not found — installing docker-compose (v1.29.2)..."
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            docker-compose --version
+          fi
+
+      - name: Start services with docker-compose
+        run: docker-compose -f docker/docker-compose.yml up --build -d
+
+      - name: Run pytest
+        run: pytest -v
+        env:
+          DISABLE_LOGGING: "true"
+
+      - name: Install Gauge
+        run: |
+          curl -SsL https://downloads.gauge.org/stable | sh
+          echo "$HOME/.gauge/bin" >> $GITHUB_PATH
+          gauge version
+
+      - name: Run Gauge specs
+        run: |
+          gauge run
+
   test:
     runs-on: ubuntu-latest
 
